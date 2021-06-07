@@ -1,0 +1,27 @@
+* {
+  background-color: darkgray;
+}
+
+h1 {
+  margin: auto;
+  text-align: center;
+}
+
+.boardContainer {
+  margin: auto;
+  padding: 10px;
+  text-align: center;
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  grid-gap: 1rem;
+  width: 50%;
+  height: 400px;
+}
+
+.boardContainer div {
+  width: 200px;
+  height: 200px;
+  background-color: aquamarine;
+  text-align: center;
+  font-size: 10rem;
+}
