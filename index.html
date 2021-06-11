@@ -8,7 +8,30 @@
   </head>
   <body>
     <h1>Tic-Tac-Toe</h1>
+    <h2 id="winnerText"></h2>
     <div class="boardContainer" id="boardContainer"></div>
+    <form class="bg-modal">
+      <div class="modal-content">
+        <div class="close">+</div>
+        <img
+          src="https://www.vippng.com/png/detail/150-1507962_game-png-background-image-simple-tic-tac-toe.png"
+          alt="Library Icon"
+        />
+        <input
+          id="playerOne"
+          type="text"
+          placeholder="Player One Name"
+          required
+        />
+        <input
+          id="playerTwo"
+          type="text"
+          placeholder="Player Two Name"
+          required
+        />
+        <button type="submit" id="submitButton">Submit</button>
+      </div>
+    </form>
     <script src="script.js"></script>
   </body>
 </html>
