@@ -1,19 +1,43 @@
 const Player = (name, symbol) => ({ name, symbol });
 
-const game = (() => {})();
-
 const GameBoard = (() => {
+  const board = new Array(9).fill(undefined);
+
+  const setDiv = (index, symbol) => {
+    if (index >= board.length) return;
+    board[index] = symbol;
+  };
+
+  const getDiv = (index) => {
+    if (index >= board.length) return;
+    return board[index];
+  };
+
+  const reset = () => {
+    for (let i = 0; i < board.length; i += 1) {
+      board[i] = undefined;
+    }
+  };
+
+  return { setDiv, getDiv, reset, board };
+})();
+
+const Game = (() => {
   const popUp = document.querySelector(".bg-modal");
   const inputs = document.querySelectorAll("input");
+  const winnerText = document.getElementById("winnerText");
+  const squares = document.querySelectorAll(".boardDiv");
+  const resetButton = document.getElementById("reset");
   let playerOne;
   let playerTwo;
   let currentPlayer;
+  let endGame = false;
+  const list = new Array(9).fill(undefined);
 
   // CLOSE MODAL
   function closeModal() {
     popUp.style.display = "none";
   }
-
   document.querySelector(".close").addEventListener("click", closeModal);
 
   function clearFields() {
@@ -25,7 +49,6 @@ const GameBoard = (() => {
 
     const playerOneInputVal = document.getElementById("playerOne").value;
     const playerTwoInputVal = document.getElementById("playerTwo").value;
-
     playerOne = Player(`${playerOneInputVal}`, "X");
     playerTwo = Player(`${playerTwoInputVal}`, "O");
     currentPlayer = playerOne;
@@ -35,17 +58,26 @@ const GameBoard = (() => {
   }
   popUp.addEventListener("submit", getInputValue);
 
-  const winnerText = document.getElementById("winnerText");
-  let endGame = false;
-  const list = new Array(9).fill(undefined);
+  const updateGameboard = () => {
+    for (let i = 0; i < squares.length; i++) {
+      if (GameBoard.getDiv(i) === undefined) {
+        squares[i].innerText = "";
+      } else {
+        squares[i].innerText = GameBoard.getDiv(i);
+      }
+    }
+  };
 
-  const board = new Array(9).fill(undefined);
-  for (let i = 0; i <= 8; i += 1) {
-    const divContent = board.splice(0, 1);
-    const boardDiv = document.createElement("div");
-    boardDiv.innerText = divContent;
-    document.getElementById("boardContainer").appendChild(boardDiv);
-  }
+  resetButton.addEventListener("click", () => {
+    GameBoard.reset();
+    for (let i = 0; i < list.length; i += 1) {
+      list[i] = undefined;
+    }
+    currentPlayer = playerOne;
+    updateGameboard();
+    winnerText.innerText = "";
+    endGame = false;
+  });
 
   const tictactoe = (list) => {
     const win = [
@@ -66,23 +98,26 @@ const GameBoard = (() => {
     return !list.reduce((a, b) => a - b) ? "Pending" : "Draw";
   };
 
-  const squares = document.querySelectorAll(".boardContainer div");
   function clickedBox(e) {
     const squareArray = Array.from(squares);
     const index = squareArray.indexOf(e.target);
 
-    if (!board[index] && endGame === false) {
-      board[index] = currentPlayer.symbol;
+    if (
+      e.target.textContent === "" &&
+      endGame === false &&
+      list[index] === undefined
+    ) {
       e.target.innerText = currentPlayer.symbol;
+      GameBoard.setDiv(index, currentPlayer.symbol);
+      updateGameboard();
 
-      if (currentPlayer.symbol === "X") {
+      if (currentPlayer === playerOne) {
         list[index] = 1;
-      } else if (currentPlayer.symbol === "O") {
+      } else if (currentPlayer === playerTwo) {
         list[index] = 0;
       }
 
       const gameResult = tictactoe(list);
-
       if (gameResult === "A" || gameResult === "B") {
         winnerText.innerText = `${currentPlayer.name} Won!`;
         endGame = true;
@@ -99,36 +134,3 @@ const GameBoard = (() => {
     square.addEventListener("click", clickedBox);
   });
 })();
-
-// function openModal() {
-//   popUp.style.display = "flex";
-// }
-// const popUp = document.querySelector(".bg-modal");
-// popUp.addEventListener("submit", getInputValue);
-
-// const inputs = document.querySelectorAll("input");
-
-// // CLOSE MODAL
-// function closeModal() {
-//   popUp.style.display = "none";
-// }
-
-// document.querySelector(".close").addEventListener("click", closeModal);
-
-// function clearFields() {
-//   inputs.forEach((input) => (input.value = ""));
-// }
-
-// function getInputValue(e) {
-//   e.preventDefault();
-
-//   const playerOneInputVal = document.getElementById("playerOne").value;
-//   const playerTwoInputVal = document.getElementById("playerTwo").value;
-
-//   const playerOne = Player(`${playerOneInputVal}`, "X");
-//   const playerTwo = Player(`${playerTwoInputVal}`, "O");
-
-//   closeModal();
-
-//   clearFields();
-// }
