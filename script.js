@@ -1,11 +1,43 @@
 const Player = (name, symbol) => ({ name, symbol });
 
+const game = (() => {})();
+
 const GameBoard = (() => {
-  const playerOne = Player("Guero", "X");
-  const playerTwo = Player("Random", "O");
-  let currentPlayer = playerOne;
+  const popUp = document.querySelector(".bg-modal");
+  const inputs = document.querySelectorAll("input");
+  let playerOne;
+  let playerTwo;
+  let currentPlayer;
+
+  // CLOSE MODAL
+  function closeModal() {
+    popUp.style.display = "none";
+  }
+
+  document.querySelector(".close").addEventListener("click", closeModal);
+
+  function clearFields() {
+    inputs.forEach((input) => (input.value = ""));
+  }
+
+  function getInputValue(e) {
+    e.preventDefault();
+
+    const playerOneInputVal = document.getElementById("playerOne").value;
+    const playerTwoInputVal = document.getElementById("playerTwo").value;
+
+    playerOne = Player(`${playerOneInputVal}`, "X");
+    playerTwo = Player(`${playerTwoInputVal}`, "O");
+    currentPlayer = playerOne;
+
+    clearFields();
+    closeModal();
+  }
+  popUp.addEventListener("submit", getInputValue);
+
   const winnerText = document.getElementById("winnerText");
-  let list = new Array(9).fill(undefined);
+  let endGame = false;
+  const list = new Array(9).fill(undefined);
 
   const board = new Array(9).fill(undefined);
   for (let i = 0; i <= 8; i += 1) {
@@ -26,8 +58,8 @@ const GameBoard = (() => {
       [0, 4, 8],
       [2, 4, 6],
     ];
-    for (let i = 0; i < win.length; i++) {
-      sum = list[win[i][0]] + list[win[i][1]] + list[win[i][2]];
+    for (let i = 0; i < win.length; i += 1) {
+      const sum = list[win[i][0]] + list[win[i][1]] + list[win[i][2]];
       if (sum === 3) return "A";
       if (sum === 0) return "B";
     }
@@ -39,7 +71,7 @@ const GameBoard = (() => {
     const squareArray = Array.from(squares);
     const index = squareArray.indexOf(e.target);
 
-    if (!board[index]) {
+    if (!board[index] && endGame === false) {
       board[index] = currentPlayer.symbol;
       e.target.innerText = currentPlayer.symbol;
 
@@ -49,20 +81,14 @@ const GameBoard = (() => {
         list[index] = 0;
       }
 
-      let tttResult = tictactoe(list);
+      const gameResult = tictactoe(list);
 
-      if (tttResult === "A") {
+      if (gameResult === "A" || gameResult === "B") {
         winnerText.innerText = `${currentPlayer.name} Won!`;
-        //endGame()
-        return;
-      } else if (tttResult === "B") {
-        winnerText.innerText = `${currentPlayer.name} Won!`;
-        //endGame();
-        return;
-      } else if (tttResult === "Draw") {
-        winnerText.innerText = `Draw!`;
-        //endGame()
-        return;
+        endGame = true;
+      } else if (gameResult === "Draw") {
+        winnerText.innerText = "Draw!";
+        endGame = true;
       }
 
       currentPlayer = currentPlayer === playerOne ? playerTwo : playerOne;
@@ -74,20 +100,35 @@ const GameBoard = (() => {
   });
 })();
 
-const popUp = document.querySelector(".bg-modal");
-const inputs = document.querySelectorAll("input");
-
 // function openModal() {
 //   popUp.style.display = "flex";
 // }
+// const popUp = document.querySelector(".bg-modal");
+// popUp.addEventListener("submit", getInputValue);
 
-// CLOSE MODAL
-function closeModal() {
-  popUp.style.display = "none";
-}
+// const inputs = document.querySelectorAll("input");
 
-document.querySelector(".close").addEventListener("click", closeModal);
+// // CLOSE MODAL
+// function closeModal() {
+//   popUp.style.display = "none";
+// }
+
+// document.querySelector(".close").addEventListener("click", closeModal);
 
 // function clearFields() {
 //   inputs.forEach((input) => (input.value = ""));
+// }
+
+// function getInputValue(e) {
+//   e.preventDefault();
+
+//   const playerOneInputVal = document.getElementById("playerOne").value;
+//   const playerTwoInputVal = document.getElementById("playerTwo").value;
+
+//   const playerOne = Player(`${playerOneInputVal}`, "X");
+//   const playerTwo = Player(`${playerTwoInputVal}`, "O");
+
+//   closeModal();
+
+//   clearFields();
 // }
